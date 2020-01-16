@@ -401,6 +401,7 @@ class AtomicCalendar extends LitElement {
 			startDaysAhead: 0, // shows the events starting on x days from today. Default 0.
 			showLastCalendarWeek: true, // always shows last line/week in calendar mode, even if it's not the current month
 			showCalNameInEvent: false,
+			sortByStartTime: false, // sort first by calendar, then by time
 			// color and font settings
 			dateColor: 'var(--primary-text-color)', // Date text color (left side)
 			dateSize: 90, //Date text size (percent of standard text)
@@ -725,6 +726,12 @@ class AtomicCalendar extends LitElement {
 								}
 						})
 					})
+				
+				if (this.config.sortByStartTime) {
+					singleEvents.sort(function(a,b) {
+						return moment(a.startTime).diff(moment(b.startTime));
+					})
+				}
 				let ev = [].concat.apply([], singleEvents )
 				// grouping events by days, returns object with days and events
 				const groupsOfEvents = ev.reduce(function (r, a) {

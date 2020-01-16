@@ -65,6 +65,7 @@ If you have any suggestions about design or functionality, please let me know, o
 | startDaysAhead | integer | optional | v0.7.3 | `0` If you set more than 0, events will be loaded starting `x` days from today. For example `1` - the component will show events starting from tomorrow.
 | showDescription | boolean | optional | v0.8.4 | `false` Shows long description of event from Google Calendar.
 | showNoEventsForToday | boolean | optional | v0.8.6 | `false` Shows `No events for today` if no events, instead of omit the entry.
+| sortByStartTime | boolean | optional | v0.9.0 | `false` Sort events by start time first instead of grouping them by calendar.
 
 ### Translations and language related settings
 Week / month names are translated automatically
