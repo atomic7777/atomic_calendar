@@ -1,4 +1,4 @@
-# atomic calendar card v0.8.5
+# atomic calendar card v0.9.0
 Advanced calendar card for Home Assistant with Lovelace.
 
 Work in progress. If you have any problems, please use [v0.8.5](https://github.com/atomic7777/atomic_calendar/releases/download/v0.8.5/atomic_calendar.js)
@@ -93,6 +93,7 @@ If you don't set colors, default theme colors will be used. If you use automatic
 | locationLinkColor | string | v0.3.0 | `default text color` Color of location link (right side)
 | locationTextSize | integer | v0.3.0 | `90` Location text size (percent of default font)
 | locationIconColor | string | v0.3.0 | `rgb(230, 124, 115)` Color of location icon
+| hideFinishedEvents | boolean | v0.9.0 | `false` Don't display finished events
 | dimFinishedEvents | boolean | v0.3.0 | `true` Apply filters to finished events (configured below)
 | finishedEventOpacity | float | v0.3.0 | `0.6` Opacity level of finished events
 | finishedEventOpacity | string | v0.3.0 | `grayscale(100%)` additional css filter to of finished events (default - greyscale)
@@ -144,7 +145,7 @@ entities:
   entity: calendar.home_events
 - type: icon3                          # icon1 has no filters, show all events from this calendar
   entity: calendar.birthday
-```
+
 
             entities:
             - entity: calendar.calendar_holiday
@@ -156,7 +157,6 @@ entities:
 	    - entity: calendar.atomic7777       // no type, it won't be shown in calendar mode
 	    CalEventIcon1Filter: bills,waste    // only events with those words will be shown
 	    CalEventIcon2Filter: cleaning       // only events with those words will be shown		
-			
 ```
 
 If you set filters (keywords) for any type, it will show an icon only when event summary contains one of keywords. If you don't set any filter, it will show icons for all days with any events.

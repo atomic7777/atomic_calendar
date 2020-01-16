@@ -35,7 +35,7 @@ class AtomicCalendar extends LitElement {
 
 	render() {
         if(this.firstrun){
-			console.log("atomic_calendar v0.8.9 loaded")	
+			console.log("atomic_calendar v0.9.0 loaded")	
 		}
 		this.language = this.config.language != '' ? this.config.language : this.hass.language.toLowerCase()
 		let timeFormat = moment.localeData(this.language).longDateFormat('LT')
@@ -425,6 +425,7 @@ class AtomicCalendar extends LitElement {
 			locationTextSize: 90,
 
 			// finished events settings
+			hideFinishedEvents: false, // show finished events
 			dimFinishedEvents: true, // make finished events greyed out or set opacity
 			finishedEventOpacity: 0.6, // opacity level
 			finishedEventFilter: 'grayscale(100%)', // css filter 
@@ -718,8 +719,9 @@ class AtomicCalendar extends LitElement {
 					result.map((calendar, i) => {
 						calendar.map((singleEvent) => {
 							let blacklist = typeof this.config.entities[i]["blacklist"] != 'undefined' ? this.config.entities[i]["blacklist"] : ''
-								if(blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)){
-									singleEvents.push(new EventClass(singleEvent, this.config.entities[i] ))
+							let singleAPIEvent = new EventClass(singleEvent, this.config.entities[i])
+								if((blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)) && !(this.config.hideFinishedEvents && singleAPIEvent.isEventFinished)){
+									singleEvents.push(singleAPIEvent)
 								}
 						})
 					})
@@ -1118,24 +1120,4 @@ class EventClass {
 	get link() {
 		return this.eventClass.htmlLink
 	}
-	
-	
-	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
