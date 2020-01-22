@@ -57,7 +57,7 @@ If you have any suggestions about design or functionality, please let me know, o
 | entities | list | **required** | v0.3.0 | One or more calendars, configured in HA [Google Calendar component](https://www.home-assistant.io/components/calendar.google/)
 | title | string | optional | v0.3.0 | `Calendar` Calendar title
 | showColors | string | optional | v0.3.0 | `true` Show colors in events, configured in entities list
-| maxDaysToShow | integer | optional | v0.3.0 | `7` Maximum number of days to show
+| maxDaysToShow | integer | optional | v0.3.0 | `7` Maximum number of days to show; if set to zero will only display currently running events
 | showLocation | boolean | optional | v0.3.0 | `true` Show location link (right side)
 | showMonth | boolean | optional | v0.3.0 | `false` Show month under day (left side)
 | showLoader | boolean | optional | v0.7.0 | `true` Show animation, when events are being loaded from Google Calendar.

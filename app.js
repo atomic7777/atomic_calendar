@@ -388,7 +388,7 @@ class AtomicCalendar extends LitElement {
 
 			// main settings
 			showColors: true, // show calendar title colors, if set in config (each calendar separately)
-			maxDaysToShow: 7, // maximum days to show
+			maxDaysToShow: 7, // maximum days to show (if zero, show only currently running events)
 			showLoader: true, // show animation when loading events from Google calendar
 
 			showLocation: true, // show location link (right side)
@@ -708,7 +708,8 @@ class AtomicCalendar extends LitElement {
 
 		let timeOffset = -moment().utcOffset()
 		let start = moment().add(this.config.startDaysAhead, 'days').startOf('day').add(timeOffset,'minutes').format('YYYY-MM-DDTHH:mm:ss');
-		let end = moment().add((this.config.maxDaysToShow + this.config.startDaysAhead), 'days').endOf('day').add(timeOffset,'minutes').format('YYYY-MM-DDTHH:mm:ss');
+		let endOffset = Math.max(this.config.maxDaysToShow, 1) + this.config.startDaysAhead;
+		let end = moment().add(endOffset, 'days').endOf('day').add(timeOffset,'minutes').format('YYYY-MM-DDTHH:mm:ss');
 		let calendarUrlList = []
 		this.config.entities.map(entity =>{
 			calendarUrlList.push([`calendars/${entity.entity}?start=${start}Z&end=${end}Z`])
@@ -721,7 +722,7 @@ class AtomicCalendar extends LitElement {
 						calendar.map((singleEvent) => {
 							let blacklist = typeof this.config.entities[i]["blacklist"] != 'undefined' ? this.config.entities[i]["blacklist"] : ''
 							let singleAPIEvent = new EventClass(singleEvent, this.config.entities[i])
-								if((blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)) && !(this.config.hideFinishedEvents && singleAPIEvent.isEventFinished)){
+								if((blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)) && ((this.config.maxDaysToShow === 0 && singleAPIEvent.isEventRunning) || !(this.config.hideFinishedEvents && singleAPIEvent.isEventFinished))){
 									singleEvents.push(singleAPIEvent)
 								}
 						})
