@@ -389,6 +389,7 @@ class AtomicCalendar extends LitElement {
 			// main settings
 			showColors: true, // show calendar title colors, if set in config (each calendar separately)
 			maxDaysToShow: 7, // maximum days to show (if zero, show only currently running events)
+			maxEventCount: 0, // maximum number of events to show (if zero, unlimited)
 			showLoader: true, // show animation when loading events from Google calendar
 
 			showLocation: true, // show location link (right side)
@@ -718,12 +719,14 @@ class AtomicCalendar extends LitElement {
 			return await (Promise.all(calendarUrlList.map(url =>
 				this.hass.callApi('get', url[0]))).then((result) => {
 					let singleEvents = []
+					let eventCount = 0
 					result.map((calendar, i) => {
 						calendar.map((singleEvent) => {
 							let blacklist = typeof this.config.entities[i]["blacklist"] != 'undefined' ? this.config.entities[i]["blacklist"] : ''
 							let singleAPIEvent = new EventClass(singleEvent, this.config.entities[i])
-								if((blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)) && ((this.config.maxDaysToShow === 0 && singleAPIEvent.isEventRunning) || !(this.config.hideFinishedEvents && singleAPIEvent.isEventFinished))){
-									singleEvents.push(singleAPIEvent)
+								if((this.config.maxEventCount === 0 || eventCount < this.config.maxEventCount) && (blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)) && ((this.config.maxDaysToShow === 0 && singleAPIEvent.isEventRunning) || !(this.config.hideFinishedEvents && singleAPIEvent.isEventFinished))){
+									singleEvents.push(singleAPIEvent);
+									eventCount++;
 								}
 						})
 					})
