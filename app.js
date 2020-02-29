@@ -376,7 +376,7 @@ class AtomicCalendar extends LitElement {
 	}
 
 	setConfig(config) {
-        config = JSON.parse(JSON.stringify(config));
+		config = JSON.parse(JSON.stringify(config));
 		if (!config.entities) {
 			throw new Error('You need to define entities');
 		}
