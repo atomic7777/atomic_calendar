@@ -694,7 +694,17 @@ class AtomicCalendar extends LitElement {
 			else return false
 		}))
 	} else return false
+	}
 
+	/**
+	 * check if event was declined
+	 * @param {event} event data
+	 * @return {bool}
+	 */
+	checkDeclined(event) {
+		if(!event.attendees) { return false }
+		if(!event.attendees.length > 0) { return false }
+		return !!event.attendees.find(a => a.self == true && a.responseStatus == "declined")
 	}
 
 
@@ -718,9 +728,9 @@ class AtomicCalendar extends LitElement {
 					result.map((calendar, i) => {
 						calendar.map((singleEvent) => {
 							let blacklist = typeof this.config.entities[i]["blacklist"] != 'undefined' ? this.config.entities[i]["blacklist"] : ''
-								if(blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)){
-									singleEvents.push(new EventClass(singleEvent, this.config.entities[i] ))
-								}
+							if((blacklist=='' || !this.checkFilter(singleEvent.summary, blacklist)) && !this.checkDeclined(singleEvent)){
+								singleEvents.push(new EventClass(singleEvent, this.config.entities[i] ))
+							}
 						})
 					})
 				let ev = [].concat.apply([], singleEvents )
