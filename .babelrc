@@ -4,21 +4,20 @@
       "@babel/preset-env",
       {
         "modules": false,
-		"targets": "> 2.5%, not dead"
-
+        "targets": "> 2.5%, not dead"
       }
     ],
-    ["minify"]
+    [
+      "minify",
+      {
+        "mangle": false,
+        "evaluate": false
+      }
+    ]
   ],
   "plugins": [
-    [
-      "@babel/plugin-proposal-decorators",
-      { "legacy": true }
-    ],
-    [
-      "@babel/plugin-proposal-class-properties",
-      { "loose": true }
-    ],
+    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-class-properties", { "loose": true }],
     ["@babel/plugin-transform-template-literals"]
   ]
 }
