@@ -31,7 +31,7 @@ class AtomicCalendar extends LitElement {
       selectedMonth: Object,
     };
   }
-  updated() {}
+  updated() { }
 
   render() {
     if (this.firstrun) {
@@ -87,25 +87,25 @@ class AtomicCalendar extends LitElement {
 
       <ha-card class="cal-card">
         <div class="cal-titleContainer">
-          <div class="cal-title" @click="${(e) => this.handleToggle()}">
+          <div class="cal-title" @click="${() => this.handleToggle()}">
             ${this.config.title}
           </div>
 
           ${this.showLoader && this.config.showLoader
-            ? html` <div class="loader"></div>`
-            : ""}
+        ? html` <div class="loader"></div>`
+        : ""}
 
           <div class="calDate">
             ${this.config.showDate ? this.getDate() : null}
           </div>
         </div>
-        <div style="padding-top: 4px;">
+        <div class="content"">
           ${this.content}
         </div>
       </ha-card>`;
   }
 
-  firstTimeConfig() {}
+  firstTimeConfig() { }
 
   handleToggle() {
     if (this.config.enableModeChange) {
@@ -119,7 +119,7 @@ class AtomicCalendar extends LitElement {
       <style>
         .cal-card {
           cursor: default;
-          padding: 16px;
+          background: transparent;
         }
         .cal-title {
           font-size: var(--paper-font-headline_-_font-size);
@@ -131,7 +131,7 @@ class AtomicCalendar extends LitElement {
           float: left;
         }
         .cal-titleContainer {
-          display: flex;
+          display: none;
           flex-direction: row;
           justify-content: space-between;
           vertical-align: middle;
@@ -151,6 +151,16 @@ class AtomicCalendar extends LitElement {
           opacity: 0.75;
         }
 
+        .content{
+          height: calc(100vh - 1.5em);
+          overflow: scroll;
+          padding: 1em;
+        }
+
+        .content::-webkit-scrollbar {
+          display: none;
+        }
+
         table {
           color: black;
           margin-left: 0px;
@@ -164,8 +174,18 @@ class AtomicCalendar extends LitElement {
         }
 
         .daywrap {
-          padding: 2px 0 4px 0;
-          border-top: 1px solid;
+        }
+
+        .day{
+          display: flex;
+        }
+
+        .last-event{
+          margin-bottom: 0.5em;
+        }
+
+        .not-first-event{
+          margin-top: 2px;
         }
 
         tr {
@@ -173,9 +193,37 @@ class AtomicCalendar extends LitElement {
         }
 
         .event-left {
-          padding: 4px 10px 3px 8px;
           text-align: center;
           vertical-align: top;
+          text-transform: uppercase;
+          flex: 1;
+          background-color: #ffffff;
+          border-radius: 15px;
+          overflow: hidden;
+          margin-right: 0.5em;
+          line-height: 1
+        }
+
+        .not-first-event .event-left {
+          visibility: hidden;
+        }
+
+        .day-weekday{
+          font-size: 100%;
+          font-weight: 600;
+          padding: 0.3em;
+          background-color: #D63118;
+          color: white;
+        }
+
+        .day-date{
+          font-size: 300%;
+          font-weight: 500;
+        }
+
+        .day-month{
+          font-size: 150%;
+          font-weight: 400;
         }
 
         .daywrap > td {
@@ -184,8 +232,19 @@ class AtomicCalendar extends LitElement {
 
         .event-right {
           display: flex;
-          justify-content: space-between;
-          padding: 0px 5px 0 5px;
+          padding: 1em;
+          flex: 5;
+          background-color: #dedede;
+        }
+
+        .first-event .event-right{
+          border-top-left-radius: 15px;
+          border-top-right-radius: 15px;
+        }
+
+        .last-event .event-right{
+          border-bottom-left-radius: 15px;
+          border-bottom-right-radius: 15px;
         }
 
         .event-description {
@@ -195,9 +254,7 @@ class AtomicCalendar extends LitElement {
         }
 
         .event-main {
-          flex-direction: row nowrap;
-          display: inline-block;
-          vertical-align: top;
+          flex-grow: 1;
         }
 
         .event-location {
@@ -554,19 +611,16 @@ class AtomicCalendar extends LitElement {
     else
       return html`
         <div>
-          <a
-            href="https://maps.google.com/?q=${event.location}"
+          <a href="https://maps.google.com/?q=${event.location}"
             target="_blank"
             class="location-link"
-            style="color: ${this.config.locationLinkColor};font-size: ${this
-              .config.locationTextSize}%;"
-            ><ha-icon
+            style="color: ${this.config.locationLinkColor};font-size: ${this.config.locationTextSize}%;">
+            <ha-icon
               class="event-location-icon"
               style="${this.config.locationIconColor}"
-              icon="mdi:map-marker"
-            ></ha-icon
-            >&nbsp;${event.address}</a
-          >
+              icon="mdi:map-marker"></ha-icon>
+            <span class="location-address">${event.address}</span>
+          </a>
         </div>
       `;
   }
@@ -630,8 +684,8 @@ class AtomicCalendar extends LitElement {
         const dayWrap = i == 0 && di > 0 ? "daywrap" : "";
         const isEventNext =
           di == 0 &&
-          moment(event.startTime).isAfter(moment()) &&
-          (i == 0 || !moment(arr[i - 1].startTime).isAfter(moment()))
+            moment(event.startTime).isAfter(moment()) &&
+            (i == 0 || !moment(arr[i - 1].startTime).isAfter(moment()))
             ? true
             : false;
         //show line before next event
@@ -664,7 +718,7 @@ class AtomicCalendar extends LitElement {
             <hr
               class="progress"
               style="color: ${this.config.progressBarColor};border-color: ${this
-                .config.progressBarColor};"
+              .config.progressBarColor};"
             />
           </div>`;
         }
@@ -672,15 +726,15 @@ class AtomicCalendar extends LitElement {
         var finishedEventsStyle =
           event.isEventFinished && this.config.dimFinishedEvents
             ? `opacity: ` +
-              this.config.finishedEventOpacity +
-              `; filter: ` +
-              this.config.finishedEventFilter
+            this.config.finishedEventOpacity +
+            `; filter: ` +
+            this.config.finishedEventFilter
             : ``;
 
         const hoursHTML = this.config.showHours
           ? html`<div
               style="color: ${this.config.timeColor}; font-size: ${this.config
-                .timeSize}%;"
+              .timeSize}%;"
             >
               ${this.getHoursHTML(event)}
             </div>`
@@ -689,31 +743,28 @@ class AtomicCalendar extends LitElement {
           ? html`<div
               class="event-description"
               style="color: ${this.config.descColor};font-size: ${this.config
-                .descSize}%;"
+              .descSize}%;"
             >
               ${event.description}
             </div>`
           : "";
 
-        const lastEventStyle =
-          i == arr.length - 1 ? "padding-bottom: 8px;" : "";
+        const isNotFirstEvent = i !== 0 ? "not-first-event" : "";
+
+        const isFirstEvent = i == 0 ? "first-event" : "";
+
+        const isLastEvent = i == arr.length - 1 ? "last-event" : "";
+
         return html`
 
-					<tr class="${dayWrap}" style="color: ${this.config.dayWrapperLineColor};">
-						<td class="event-left" style="color: ${this.config.dateColor};font-size: ${
-          this.config.dateSize
-        }%;"><div>
-								<div>${
-                  i === 0 && this.config.showMonth
-                    ? event.startTimeToShow.format("MMM")
-                    : ""
-                }</div>
-								<div>${i === 0 ? event.startTimeToShow.format("DD") : ""}</div>
-								<div>${i === 0 ? event.startTimeToShow.format("ddd") : ""}</div>
-						</td>
-						<td style="width: 100%; ${finishedEventsStyle} ${lastEventStyle} ">
+					<div class="day ${dayWrap} ${isLastEvent} ${isFirstEvent} ${isNotFirstEvent}">
+            <div class="event-left" style="color: ${this.config.dateColor};">
+              <div class="day-weekday">${i === 0 ? event.startTimeToShow.format("dddd") : ""}</div>
+              <div class="day-date">${i === 0 ? event.startTimeToShow.format("DD") : ""}</div>
+              <div class="day-month">${i === 0 ? event.startTimeToShow.format("MMM") : ""}</div>
+						</div>
+						<div class="event-right" style="width: 100%; ${finishedEventsStyle} ">
 							<div>${currentEventLine}</div>
-							<div class="event-right">
 								<div class="event-main" >
 									${this.getTitleHTML(event)}
 									${hoursHTML}
@@ -721,21 +772,17 @@ class AtomicCalendar extends LitElement {
 								<div class="event-location">
 									${this.getLocationHTML(event)}
 								</div>
-							</div>
-							${descHTML}
-					${progressBar}
-						</td>
-
-					</tr>`;
+                ${descHTML}
+                ${progressBar}
+						</div>
+					</div>`;
       });
 
       return htmlEvents;
     });
-    this.content = html`<table>
-      <tbody>
+    this.content = html`<div>
         ${htmlDays}
-      </tbody>
-    </table>`;
+    </div>`;
   }
 
   /**
@@ -998,7 +1045,7 @@ class AtomicCalendar extends LitElement {
       <div class="calTitle">
         <paper-icon-button
           icon="mdi:chevron-left"
-          @click="${(e) => this.handleMonthChange(-1)}"
+          @click="${() => this.handleMonthChange(-1)}"
           title="left"
         ></paper-icon-button>
         <div
@@ -1006,8 +1053,8 @@ class AtomicCalendar extends LitElement {
         >
           <a
             href="https://calendar.google.com/calendar/r/month/${moment(
-              this.selectedMonth
-            ).format("YYYY")}/${moment(this.selectedMonth).format("MM")}/1"
+      this.selectedMonth
+    ).format("YYYY")}/${moment(this.selectedMonth).format("MM")}/1"
             style="text-decoration: none; color: ${this.config.titleColor}"
             target="_blank"
           >
@@ -1017,7 +1064,7 @@ class AtomicCalendar extends LitElement {
         </div>
         <paper-icon-button
           icon="mdi:chevron-right"
-          @click="${(e) => this.handleMonthChange(1)}"
+          @click="${() => this.handleMonthChange(1)}"
           title="right"
         ></paper-icon-button>
       </div>
@@ -1090,13 +1137,13 @@ class AtomicCalendar extends LitElement {
           ${i % 7 === 0 ? html`<tr class="cal"></tr>` : ""}
           <td class="cal">
             <div
-              @click="${(e) => this.handleEventSummary(day)}"
+              @click="${() => this.handleEventSummary(day)}"
               class="calDay"
               style=" color: ${this.config
-                .titleColor}; ${dayStyleOtherMonth} ${dayStyleToday} ${dayHolidayStyle} ${dayBackgroundStyle}"
+            .titleColor}; ${dayStyleOtherMonth} ${dayStyleToday} ${dayHolidayStyle} ${dayBackgroundStyle}"
             >
               <div style="position: relative; top: 5%; ">
-                ${day.dayNumber.replace(/^0|[^\/]0./, "")}
+                ${day.dayNumber.replace(/^0|[^/]0./, "")}
               </div>
               <div>
                 ${dayIcon1} ${dayIcon2} ${dayIcon3}

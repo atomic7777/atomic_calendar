@@ -3,7 +3,7 @@ import commonjs from "rollup-plugin-commonjs";
 import serve from "rollup-plugin-serve";
 
 const serveopts = {
-  contentBase: ["./dist"],
+  contentBase: ["./"],
   host: "localhost",
   port: 5000,
   allowCrossOrigin: true,
