@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atomic7777/atomic_calendar.git"
+    "url": "git+https://github.com/AnnieLeonia/atomic_calendar.git"
   },
   "author": "Wojciech Mamak",
   "license": "ISC",
@@ -48,7 +48,7 @@
     "webpack-merge": "4.2.1"
   },
   "bugs": {
-    "url": "https://github.com/atomic7777/atomic_calendar/issues"
+    "url": "https://github.com/AnnieLeonia/atomic_calendar/issues"
   },
-  "homepage": "https://github.com/atomic7777/atomic_calendar#readme"
+  "homepage": "https://github.com/AnnieLeonia/atomic_calendar#readme"
 }
