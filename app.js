@@ -540,7 +540,7 @@ class AtomicCalendar extends LitElement {
         : this.config.titleColor;
     //const eventIcon = isEventNext ? html`<ha-icon class="nextEventIcon" icon="mdi:arrow-right-bold"></ha-icon>` : ``
     return html`
-      <a href="${event.link}" style="text-decoration: none;" target="_blank">
+      <a style="text-decoration: none;">
         <div
           class="event-title ${event.isEmpty ? 'empty-title' : ''}"
           style="color: ${titleColor}"
@@ -624,9 +624,7 @@ class AtomicCalendar extends LitElement {
     else
       return html`
         <div>
-          <a href="https://maps.google.com/?q=${event.location}"
-            target="_blank"
-            class="location-link"
+          <a class="location-link"
             style="color: ${this.config.locationLinkColor};font-size: ${this.config.locationTextSize}%;">
             <ha-icon
               class="event-location-icon"
