@@ -231,10 +231,13 @@ class AtomicCalendar extends LitElement {
         }
 
         .event-right {
-          display: flex;
           padding: 1em;
           flex: 5;
           background-color: #dedede;
+        }
+        
+        .event-right-top{
+          display: flex;
         }
 
         .first-event .event-right{
@@ -264,6 +267,14 @@ class AtomicCalendar extends LitElement {
         }
 
         .event-title {
+          font-size: 150%;
+        }
+
+        .empty-title{
+          font-size: 120%;
+          color: #716d6d !important;
+          text-align: center;
+          margin-top: 15px;
         }
 
         .event-location-icon {
@@ -277,8 +288,8 @@ class AtomicCalendar extends LitElement {
         }
 
         .event-circle {
-          width: 10px;
-          height: 10px;
+          width: 12px;
+          height: 12px;
           margin-left: -2px;
         }
 
@@ -295,7 +306,8 @@ class AtomicCalendar extends LitElement {
 
         hr.progress {
           margin: -8px 0px 2px 0px;
-          border-width: 1px 0 0 0;
+          border-width: 1.5px;
+          border-style: solid;
         }
 
         .progress-container {
@@ -307,6 +319,7 @@ class AtomicCalendar extends LitElement {
           height: 10px;
           color: ${this.config.progressBarColor};
           margin-left: -2px;
+          z-index: 1;
         }
 
         .progressBar {
@@ -430,7 +443,7 @@ class AtomicCalendar extends LitElement {
       descColor: "var(--primary-text-color)", // Description text color (left side)
       descSize: 80, //Description text size (percent of standard text)
 
-      showNoEventsForToday: false,
+      showNoEventsForToday: true,
       noEventsForTodayText: "No events for today",
       noEventsForNextDaysText: "No events in the next days",
 
@@ -529,8 +542,8 @@ class AtomicCalendar extends LitElement {
     return html`
       <a href="${event.link}" style="text-decoration: none;" target="_blank">
         <div
-          class="event-title"
-          style="font-size: ${this.config.titleSize}%;color: ${titleColor}"
+          class="event-title ${event.isEmpty ? 'empty-title' : ''}"
+          style="color: ${titleColor}"
         >
           ${titletext}
         </div></a
@@ -703,22 +716,27 @@ class AtomicCalendar extends LitElement {
 
         //show current event progress bar
         var progressBar = ``;
-        if (di == 0 && this.config.showProgressBar && event.isEventRunning) {
+        console.log(event);
+
+        if (di == 0 && this.config.showProgressBar && event.isEventRunning && !event.isFullDayEvent) {
           let eventDuration = event.endTime.diff(event.startTime, "minutes");
           let eventProgress = moment().diff(event.startTime, "minutes");
           let eventPercentProgress = Math.floor(
             (eventProgress * 100) / eventDuration
           );
-          progressBar = html`<div class="progress-container">
-            <ha-icon
-              icon="mdi:circle"
-              class="progress-circle"
-              style="margin-left:${eventPercentProgress}%;"
-            ></ha-icon>
+          progressBar = html`<div class="progress-container" style="position:relative;">
+          <ha-icon
+          icon="mdi:circle"
+          class="progress-circle"
+          style="margin-left:${eventPercentProgress}%;"
+          ></ha-icon>
+          <hr
+             class="progress past"
+             style="border-color: ${this.config.progressBarColor}; width:${eventPercentProgress}%;position:absolute;"
+           />  
             <hr
               class="progress"
-              style="color: ${this.config.progressBarColor};border-color: ${this
-              .config.progressBarColor};"
+              style="border-color: #b0abab;"
             />
           </div>`;
         }
@@ -764,17 +782,19 @@ class AtomicCalendar extends LitElement {
               <div class="day-month">${i === 0 ? event.startTimeToShow.format("MMM") : ""}</div>
 						</div>
 						<div class="event-right" style="width: 100%; ${finishedEventsStyle} ">
-							<div>${currentEventLine}</div>
+              <div>${currentEventLine}</div>
+              <div class="event-right-top">
 								<div class="event-main" >
 									${this.getTitleHTML(event)}
 									${hoursHTML}
-								</div>
-								<div class="event-location">
+                  </div>
+                  <div class="event-location">
 									${this.getLocationHTML(event)}
-								</div>
-                ${descHTML}
+                  </div>
+                  </div>
                 ${progressBar}
-						</div>
+                ${descHTML}
+                </div>
 					</div>`;
       });
 
@@ -864,18 +884,60 @@ class AtomicCalendar extends LitElement {
           });
         });
         let ev = [].concat.apply([], singleEvents);
-        // grouping events by days, returns object with days and events
-        const groupsOfEvents = ev.reduce(function (r, a) {
-          r[a.daysToSort] = r[a.daysToSort] || [];
-          r[a.daysToSort].push(a);
-          return r;
-        }, {});
 
-        const days = Object.keys(groupsOfEvents).map(function (k) {
-          return groupsOfEvents[k];
-        });
+        // grouping events by days, returns object with days and events
+        // const groupsOfEvents = ev.reduce(function (r, a) {
+        //   r[a.daysToSort] = r[a.daysToSort] || [];
+        //   r[a.daysToSort].push(a);
+        //   return r;
+        // }, {});
+
+        // const days = Object.keys(groupsOfEvents).map(function (k) {
+        //   return groupsOfEvents[k];
+        // });
         this.showLoader = false;
-        return days;
+
+        let startDate = moment();
+        let endDate = moment().add(this.config.maxDaysToShow + 1, 'days');
+
+        let week = [];
+
+        while (startDate.diff(endDate) < 0) {
+          let noEventDay = true;
+          var d = [];
+          for (let i in ev) {
+            if (ev[i].daysToSort == startDate.format('YYYYMMDD')) {
+              noEventDay = false;
+              d.push(ev[i]);
+            }
+          }
+          if (noEventDay) {
+            var emptyEv = {
+              eventClass: "",
+              config: "",
+              start: { dateTime: moment(startDate).endOf("day") },
+              end: { dateTime: moment(startDate).endOf("day") },
+              summary: this.config.noEventsForTodayText,
+              isFinished: false,
+              htmlLink: "https://calendar.google.com/calendar/r/day?sf=true",
+            };
+            var emptyEvent = new EventClass(emptyEv, "");
+            emptyEvent.isEmpty = true;
+            d.push(emptyEvent);
+          } else {
+            console.log(d);
+            d.sort((a, b) => a.startTime - b.startTime);
+            console.log(d);
+          }
+
+          week.push(d);
+          startDate.add(1, 'days')
+        }
+        console.log(week);
+
+        // console.log(days);
+
+        return week;
       });
     } catch (error) {
       this.showLoader = false;
