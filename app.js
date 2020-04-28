@@ -714,7 +714,6 @@ class AtomicCalendar extends LitElement {
 
         //show current event progress bar
         var progressBar = ``;
-        console.log(event);
 
         if (di == 0 && this.config.showProgressBar && event.isEventRunning && !event.isFullDayEvent) {
           let eventDuration = event.endTime.diff(event.startTime, "minutes");
@@ -923,17 +922,12 @@ class AtomicCalendar extends LitElement {
             emptyEvent.isEmpty = true;
             d.push(emptyEvent);
           } else {
-            console.log(d);
             d.sort((a, b) => a.startTime - b.startTime);
-            console.log(d);
           }
 
           week.push(d);
           startDate.add(1, 'days')
         }
-        console.log(week);
-
-        // console.log(days);
 
         return week;
       });
