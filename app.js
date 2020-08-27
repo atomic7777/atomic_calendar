@@ -305,7 +305,7 @@ class AtomicCalendar extends LitElement {
         }
 
         hr.progress {
-          margin: -8px 0px 2px 0px;
+          margin: -12px 0px 2px 0px;
           border-width: 1.5px;
           border-style: solid;
         }
